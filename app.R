@@ -23,9 +23,11 @@ library(readxl)
 library(geojsonio)
 library(leaflet)
 
-setwd("C:/Users/SAMSUNG/Desktop/choijong/dashdacon/")
+load('data_db/cardnanum1.RData')
+load('data_db/cardnanum2.RData')
+load('data_db/namuge.RData')
 
-load('db/data.RData')
+
 
 card <- filter(card,!str_detect(selng_cascnt, regex("[ㄱ-ㅎ가-힣]")))#텍스트 데이터 없애기
 card <- filter(card,!str_detect(salamt, regex("[ㄱ-ㅎ가-힣]")))#텍스트 데이터 없애기
