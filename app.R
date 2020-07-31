@@ -22,12 +22,13 @@ library(newsanchor)
 library(readxl)
 library(geojsonio)
 library(leaflet)
+library(plotly)
 
 load('cardnanum1.RData')
 load('cardnanum2.RData')
 load('namuge.RData')
 
-
+card<-rbind(cardnanum1,cardnanum2)
 
 card <- filter(card,!str_detect(selng_cascnt, regex("[ㄱ-ㅎ가-힣]")))#텍스트 데이터 없애기
 card <- filter(card,!str_detect(salamt, regex("[ㄱ-ㅎ가-힣]")))#텍스트 데이터 없애기
