@@ -23,9 +23,9 @@ library(readxl)
 library(geojsonio)
 library(leaflet)
 
-load('data_db/cardnanum1.RData')
-load('data_db/cardnanum2.RData')
-load('data_db/namuge.RData')
+load('cardnanum1.RData')
+load('cardnanum2.RData')
+load('namuge.RData')
 
 
 
