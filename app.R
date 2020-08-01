@@ -1,11 +1,4 @@
-#
-# This is a Shiny web application. You can run the application by clicking
-# the 'Run App' button above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
+
 library(data.table)
 library(tidyverse)
 library(glue)
@@ -42,7 +35,7 @@ card$salamt<-abs(card$salamt)#음수값 처리하기 위해 절대값 처리해�
 
 V2 <- substr(card$mrhst_induty_cl_code,1,1)
 card<-cbind(card, V2)#industry코드의 앞부분은 카테고리를 뜻하므로 나눔
-attach(card)#card$<- 이거 매번 붙이기 귀찮아서 attach써줌
+attach(card)
 V2[V2=="1"]='여행&교통수단'
 V2[V2=="2"]='스포츠&문화&여가'
 V2[V2=="3"]='생활용품&주유'
@@ -55,20 +48,20 @@ V2[V2=="9"]='기타'
 detach(card)#attach해준것 다시 detach해줌, 위에는 카테고리된것 이름형으로 바꾼것
 
 
-card<-cbind(card,V2)#위에 이름형으로 바꿔준것 변수화 하고, 열에 추가해준것임
+card<-cbind(card,V2
 card<-cbind(card, substr(card$receipt_dttm,5,6))#데이터를 월별로 보고자, 20200225라면 02(월)만 빼서 변수화 시켜주고, 마찬가지로 열에 추가
-names(card) <- c('date', 'ad_code', 'ad_nm', 'ind_code', 'ind_nm', 'sal_cnt', 'sal_amt', 'cate_code','cate_name','month') #변수 이름 헷갈려서 쉽게 바꿈
+names(card) <- c('date', 'ad_code', 'ad_nm', 'ind_code', 'ind_nm', 'sal_cnt', 'sal_amt', 'cate_code','cate_name','month') #변수 이름 쉽게 바꿈
 
 
 
 
-#이제 카테고리1,2,3,4, 각각 월별 sal_cnt(결제건수)의 합을 보고자 하기 때문에 해주는 과정
-##############################카테고리별로 데이터셋나누기(필요없을수도)###################################
+#카테고리1,2,3,4, 각각 월별 sal_cnt(결제건수)의 합을 보기위함
+
 for (i in 1:9){
     assign(paste0("card",i),filter(card, cate_code == i))
 }
 #str(card)
-#######################################################################
+
 card$sal_cnt <- as.numeric(card$sal_cnt)
 card$sal_amt <- as.numeric(card$sal_amt)
 ############################바로 카테고리 나누고, 월별로 결제건수 합 구하기 ########################
@@ -78,17 +71,15 @@ for (x in 1:9){
 }
 ################################완료#############################################################
 
-#이제 카테고리1,2,3,4, 각각 월별 sal_amt(결제금액)의 합을 보고자 하기 때문에 해주는 과정
+#카테고리1,2,3,4, 각각 월별 sal_amt(결제금액)의 합을 보기위함
 ###################################################################################################
 for (x in 1:9){
     A<-filter(card, cate_code == x)
     assign(paste0("category2",x),aggregate(sal_amt~month,A,sum))
 }
 ######################################################################################################
-#category1~로 시작되는것은 위에 의료,문화등으로 카테고리 해준것을 각각 데이터 셋으로 나누고, 월별 결제건수를 나타내준것임
-#category2~로 시작되는것은 위에 의료,문화등으로 카테고리 해준것을 각각 데이터 셋으로 나누고, 월별 결제금약를 나타내준것임
-#이것을 한 이유는, card데이터에서 2020년 1월부터 6월까지 어떤 산업의 결제건수 및 금액의 변동이 큰지(예상으로는 관광업이 크지 않을까 생각됨)
-#코로나가 발병된 2월에는 어떤 산업이 영향을 많이 받았는지 확인 가능할것이라 생각해서 진행하였음
+#category1~로 시작되는것은 위에 의료,문화등으로 카테고리 해준것을 각각 데이터 셋으로 나누고, 월별 결제건수를 나타내준것
+#category2~로 시작되는것은 위에 의료,문화등으로 카테고리 해준것을 각각 데이터 셋으로 나누고, 월별 결제금약를 나타내준것
 ##########################################################################################
 
 
@@ -1000,7 +991,8 @@ test <- results$results_df
 results2 <- get_headlines(query = "COVID-19" ,country="us",page = 1, page_size = 20,api_key= "87f922af12404088b7c52926a28855cd")
 test2 <- results2$results_df
 
-
+#########jhu깃허브에서 글로벌 코로나 19 확진,사망,회복자수 불러들이고, map그려줌###########################
+ #전처리 하기위한 함수 설정
 # function to update jhu input data according to mapping base format
 update_jhu = function(input_df, tag) {
     names(input_df)[1:2] = c("Province", "Country")
@@ -1033,7 +1025,7 @@ update_jhu = function(input_df, tag) {
     input_df
 }
 
-# load latest Covid-2019 data: confirmed cases
+# 최신 코로나19 확진자수 
 jhu_cases[is.na(jhu_cases)]=0
 total_cases <- sum(jhu_cases[,ncol(jhu_cases)])
 jhu_cases = update_jhu(jhu_cases, "cases")
@@ -1052,7 +1044,8 @@ colnames(jhu_cases1)<-c("confirmed")
 jhu_cases <-cbind(jhu_cases,dff=jhu_cases$confirmed-jhu_cases1$confirmed)#해당일에 확진된 사람들의 수
 
 
-# load latest Covid-2019 data: deaths
+
+# 최신 코로나19 사망자수
 jhu_deaths[is.na(jhu_deaths)]=0
 total_deaths <- sum(jhu_deaths[,ncol(jhu_deaths)])
 jhu_deaths = update_jhu(jhu_deaths, "deaths")
@@ -1071,7 +1064,7 @@ colnames(jhu_deaths1)<-c("deaths")
 jhu_deaths <-cbind(jhu_deaths,dff=jhu_deaths$deaths-jhu_deaths1$deaths)#해당일에 사망한 사람들의 수
 
 
-# load latest Covid-2019 data: recovered
+# 최신 코로나19 회복자수
 jhu_rec[is.na(jhu_rec)]=0
 total_rec <- sum(jhu_rec[,ncol(jhu_rec)])
 jhu_rec = update_jhu(jhu_rec, "recovered")
@@ -1089,11 +1082,11 @@ colnames(jhu_rec)<-c("rec","country")#해당일에 회복된 사람들의 수
 colnames(jhu_rec1)<-c("rec")
 jhu_rec <-cbind(jhu_rec,dff=jhu_rec$rec-jhu_rec1$rec)
 
-
+# 색지정 확진:빨강 회복:파랑 사망:보라
 confirmed_col = "#cc4c02"
 recover_col = "#045a8d"
 death_col = "#4d004b"
-ebola_col = "#016c59"
+ ####country는 나라의 위도경도를 나타내는 데이터이다, country에써있는 국가의 이름과 jhu데이터의 국가이름이 다르므로 일치시켜주는 작업
 jhu_cases$country =gsub("RepublicofKorea", "Republic of Korea", jhu_cases$country)
 jhu_deaths$country = gsub("RepublicofKorea", "Republic of Korea", jhu_deaths$country)
 jhu_rec$country=gsub("RepublicofKorea", "Republic of Korea", jhu_rec$country)
@@ -1115,8 +1108,9 @@ cv_rec = merge(jhu_rec, countries %>% select(-c(jhu_ID, global_level, continent_
 cv_cases =cbind(cv_cases,death=cv_death$deaths)
 cv_cases =cbind(cv_cases,rec=cv_rec$rec)
 cv_large_countries = cv_cases %>% filter(alpha3 %in% worldcountry$id)
-plot_map <- worldcountry[worldcountry$id %in% cv_large_countries$alpha3, ]
-
+plot_map <- worldcountry[worldcountry$id %in% cv_large_countries$alpha3, ]  
+            
+#######지도 그려주는 과정#############(코드공유에는 나타나지 않는 현상 발생 ㅠㅠ)#####
 basemap = leaflet(plot_map) %>% 
     addTiles() %>% 
     addLayersControl(
@@ -1142,14 +1136,17 @@ basemap = leaflet(plot_map) %>%
                    lapply(htmltools::HTML),labelOptions(style = list("font-weight" = "normal", padding = "3px 8px", "color" = recover_col),textsize = "15px", direction = "auto"))
 
 
-vars <- jhu_cases$country
+vars <- jhu_cases$country #웹사이트에 사용자가 나라를 선택할 수 있도록 선택박스를 만들기위해 vars에 저장해줌
 
+            
+            
+#####################웹사이트 구현과정!!!######################################
 library(shinydashboard)
 library(DT)
 library(dashboardthemes)
 library(shiny)
 
-# Define UI for application that draws a histogram
+#UI
 ui <- dashboardPage( 
     skin = "yellow",
     dashboardHeader(title = "Covid-19 Analysis"),
@@ -1165,50 +1162,51 @@ ui <- dashboardPage(
                  menuSubItem("Card data", tabName="card_visual",icon=icon("credit-card")),
                  menuSubItem("Tour data", tabName="tour_visual",icon=icon("luggage-cart"))
         )
-    )),
+    )),##### 웹의 제목, 좌측 탭바 설정끝, 메인창 시작#########
     dashboardBody(tags$head(tags$style(HTML('
     .main-header .logo {
     font-family: "Georgia", Times, "Times New Roman", serif;
     font-weight: bold;
     font-size: 24px;
     },
-                                   '))),
+                                   '))),#### 백그라운드 탭 메인화면 구성######
                   tabItems( 
                       tabItem(tabName = "Background",
+                              ####나라을 설정하면 코로나19관련 확진자수와 사망자수, 회복자수를 실시간으로 보여주는 BOX생성
                               fluidRow(
                                   box(selectInput('xcol', 'COUNRTY', vars), width = 12 ,icon=icon("luggage-cart"))), 
                               fluidRow(
                                   valueBoxOutput("Confirmed"),valueBoxOutput("Death"),valueBoxOutput("Rec")
                               ),
-                              
+                              #####전세계 코로나19현황 Circle로 보여주는 map생성
                               fluidRow( leafletOutput("mymap",height=800)),
-                              hr(),
+                              hr(),#### 코로나 관련 최신 기사 (한국,미국) 각각 실시간으로 보여주는 BOX###
                               fluidRow(
                                   box(h1("Latest news on coronavirus disease(KOREA)"),
                                       h3(textOutput("krnews1")),
                                       h6(textOutput("krnews11")),
-                                      uiOutput("tab1"),
+                                      uiOutput("tab1"),# 이와관련된 기사의 URL 설정
                                       hr(),
                                       h3(textOutput("krnews2")),
                                       h6(textOutput("krnews21")),
-                                      uiOutput("tab2"),
+                                      uiOutput("tab2"),# 이와관련된 기사의 URL 설정
                                       hr(),
                                       h3(textOutput("krnews3")),
                                       h6(textOutput("krnews31")),
-                                      uiOutput("tab3"),
+                                      uiOutput("tab3"),# 이와관련된 기사의 URL 설정
                                       status = "primary"),
                                   box(h1("Latest news on coronavirus disease(USA)"),
                                       h3(textOutput("krnews4")),
                                       h6(textOutput("krnews41")),
-                                      uiOutput("tab4"),
+                                      uiOutput("tab4"),# 이와관련된 기사의 URL 설정
                                       hr(),
                                       h3(textOutput("krnews5")),
                                       h6(textOutput("krnews51")),
-                                      uiOutput("tab5"),
+                                      uiOutput("tab5"),# 이와관련된 기사의 URL 설정
                                       hr(),
                                       h3(textOutput("krnews6")),
                                       h6(textOutput("krnews61")),
-                                      uiOutput("tab6"),status = "primary")
+                                      uiOutput("tab6"),# 이와관련된 기사의 URL 설정status = "primary")
                               ),
                               fluidRow(
                                   box(title="word_cloud",height=300,width=12, status = "danger",solidHeader = TRUE,collapsible = TRUE)
@@ -1218,7 +1216,7 @@ ui <- dashboardPage(
                                       img(src="https://fscluster.org/sites/default/files/styles/core-group-featured-image/public/banner-696x321.png?itok=l7uFday9",title="COVID_image", width="100%"),width=6,height=400)
                                   
                               )),
-                      ##########data################################################################################################################################3
+                      ##########한국의 코로나19 현황파악하기 위한 시각화 UI생성 (데이터,집단감염발생지 시각화,확진자테이블시각화)################################################################################################################################3
                       tabItem(tabName = "patient_data",
                               fluidRow(
                                   box(leafletOutput("Patient_map", height=1130),title="Patient_map",height=1200,  status = "primary",solidHeader = TRUE),
@@ -1229,7 +1227,8 @@ ui <- dashboardPage(
                                       )
                                   )
                               )),
-                      
+           ##########카드결제 데이터에 대한 시각화 UI생성(결제건수에 대한 월별 시각화, 결제금액에 대한 월별 시각화)################################################################################################################################3
+
                       tabItem(tabName = "card_data",
                               fluidRow(
                                   box(
@@ -1244,7 +1243,8 @@ ui <- dashboardPage(
                                   box(dataTableOutput("card_table"),style = "width:12;height:700px;overflow-y: scroll;",title="card_Table",width=12,height=800,status = "primary",solidHeader = TRUE)
                               )
                       ),
-                      
+          ##########카드결제 데이터에 대한 시각화ui(결제건수에 대한 월별 시각화, 결제금액에 대한 월별 시각화)################################################################################################################################3
+
                       tabItem(tabName = "tour_data",
                               fluidRow(
                                   box(leafletOutput("visiter_place", height=930),
