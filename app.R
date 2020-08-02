@@ -1,4 +1,5 @@
 library(ggplot2)
+library(extrafont)
 library(dplyr)
 library(tidyr)
 library(readr)
