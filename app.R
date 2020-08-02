@@ -1,7 +1,7 @@
 library(ggplot2)
 library(extrafont)
 library(dplyr)
-library(tidyr)
+library(tidyr
 library(readr)
 library(purrr)
 library(tibble)
