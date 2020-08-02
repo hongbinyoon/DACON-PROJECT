@@ -1,5 +1,3 @@
-
-library(data.table)
 library(ggplot2)
 library(dplyr)
 library(tidyr)
@@ -15,6 +13,7 @@ library(anytime)
 library(stringi)
 library(gganimate)
 library(gifski)
+library(data.table)
 library(newsanchor)
 library(readxl)
 library(geojsonio)
@@ -27,9 +26,10 @@ library(DT)
 library(dashboardthemes)
 library(wordcloud2)
 library(waffle)
-library(echarts4r.assets)
 library(bit64)
 
+
+options(shiny.maxRequestSize = 30*1024^2)
 
 #####환경불러오기######
 load('cardnanum1.RData')
@@ -1538,3 +1538,5 @@ card<-cbind(card,V2)
               
               # Run the application 
               shinyApp(ui = ui, server = server)
+
+              
